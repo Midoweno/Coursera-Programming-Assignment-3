@@ -26,17 +26,36 @@ best <- function(state, outcome) {
     if (outcome %in% c("heart attack","heart failure","pneumonia")){
       #continue
       statedf <- dfalloutcomes[dfalloutcomes[, 7] == state, ]
-      ##insert if loop here that sorts out the outcomes
-      else{
+      if (outcome=="heart attack"){
+        outcomewstate<-statedf[,c(2,11)]
+        outcomewstate<-na.omit(outcomewstate)
+        minval <- min(outcomewstate[,2])
+        best_hospitals <- outcomewstate[outcomewstate[,2] == minval, ]
+        best_hospital <- sort(best_hospitals$Hospital.Name)[1]
+        best_hospital
+      }
+      else if (outcome=="heart failure"){
+        outcomewstate<-statedf[,c(2,17)]
+        outcomewstate<-na.omit(outcomewstate)
+        minval<-min(outcomewstate[,2])
+        best_hospitals<-outcomewstate[outcomewstate[,2]==minval,]
+        best_hospital<-sort(best_hospitals$Hospital.Name)[1]
+        best_hospital
+      }
+      else if (outcome=="pneumonia"){
+        outcomewstate<-statedf[,c(2,23)]
+        outcomewstate<-na.omit(outcomewstate)
+        minval<-min(outcomewstate[,2])
+        best_hospitals<-outcomewstate[outcomewstate[,2]==minval,]
+        best_hospital<-sort(best_hospitals$Hospital.Name)[1]
+        best_hospital
+      }
+    }      
+    else{
         stop("invalid outcome")
       }
-    }
+  }  
   else{
     stop("invalid state")
-  }
-  ## Read outcome data
-
-  ## Return hospital name in that state with lowest 30-day death
-  ## rate
   }
 }
