@@ -1,7 +1,7 @@
-##LAPCDIR
+##LAPCDIR DATA DIR SET BEFORE RUNNING
 ##setwd("C:/Users/guore/Downloads/rprog_data_ProgAssignment3-data")
 
-##mac dir
+##mac dir SET BEFORE RUNNING
 ##setwd("/Users/renoguo/Documents/Coursera/rprog_data_ProgAssignment3-data")
 
 
@@ -32,10 +32,11 @@ rankall <- function(outcome, num = "best") {
   
   
   ##Ordering based on outcome
-  df <- dfalloutcomes[
-    order(dfalloutcomes[,7],
-          dfalloutcomes[,colnum],
-          dfalloutcomes[,2]),
+  df<-dfalloutcomes[!is.na(dfalloutcomes[,colnum]),]
+  df <- df[
+    order(df[,7],
+          df[,colnum],
+          df[,2]),
   ]
   state_list<-split(df,df$State) ##split into states
   rows_per_state<-sapply(state_list,nrow)
@@ -45,16 +46,23 @@ rankall <- function(outcome, num = "best") {
   if (num == "best"){
       output<-do.call(rbind,lapply(state_list,function(x){x[1,]}))
       output<-output[,c(2,7)]
+      colnames(output) <- c("hospital", "state")
       output
   } else if (num=="worst"){
       output<-do.call(rbind,lapply(state_list,function(x){x[nrow(x),]}))
       output<-output[,c(2,7)]
+      colnames(output) <- c("hospital", "state")
       output
-  } else if(any(num>rows_per_state)) {
-    stop(NA)##### LEFT OFF HERE, CHANGE THIS SO NA REPLACES THE STATE WITH FEWER ROW THAN NUM INPUT
   } else {
-    output<-do.call(rbind,lapply(state_list,function(x){x[num,]}))
-    output<-output[,c(2,7)]
-    output
+    output<-do.call(rbind,lapply(state_list,function(x){
+      if (num>nrow(x)){
+        return(data.frame(Hospital.Name=NA,State=x$State[1]))
+      } else{
+        return(x[num,c(2,7)])
+      }
+    }))
+      colnames(output) <- c("hospital", "state")
+      output
+      
   }
 }
